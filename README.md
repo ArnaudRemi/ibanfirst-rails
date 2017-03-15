@@ -1,8 +1,8 @@
 # ibanfirst-rails
 
-Gem for the Ibanfirst API
+Gem for the Ibanfirst API [WIP]
 
-Usage
+# Usage
 
 Before everthing else, create an ibanfirst account.
 
