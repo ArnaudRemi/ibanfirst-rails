@@ -11,7 +11,7 @@ module Ibanfirst
   autoload :Auth,                 'ibanfirst/auth'
   autoload :Document,             'ibanfirst/document'
   autoload :ExternalBankAccount,  'ibanfirst/external_bank_account'
-  autoload :FinancialMouvement,   'ibanfirst/financial_mouvement'
+  autoload :FinancialMovement,    'ibanfirst/financial_movement'
   autoload :Log,                  'ibanfirst/log'
   autoload :Payment,              'ibanfirst/payment'
   autoload :Trade,                'ibanfirst/trade'
@@ -37,23 +37,29 @@ module Ibanfirst
 
     # from mangopay: (method, url, params={}, filters={}, headers_or_idempotency_key = nil, before_request_proc = nil)
     def request(method, url, params={}, filters={}, headers_opt = nil)
-      uri = api_uri(url)
+      Rails.logger.debug "#{method}  #{config.api_path}/#{url}  -  params: #{params}"
+      uri = URI("#{config.api_path}/#{url}")
       uri.query = URI.encode_www_form(filters) unless filters.empty?
 
-      nonce = SecureRandom.hex(14)
-      nonce64 = Base64.encode64(nonce)
-      datetime = Time.now.iso8601
-      digest = Base64.encode64( Digest::SHA1.hexdigest( nonce + datetime + config.password ) )
+      nonce = SecureRandom.hex(16)
+      Rails.logger.debug "nonce #{nonce}"
+      nonce64 = Base64.strict_encode64(nonce)
+      Rails.logger.debug "nonce64 #{nonce64}"
+      datetime = Time.now.utc.iso8601
+      Rails.logger.debug "datetime #{datetime}"
+      digest = Base64.strict_encode64( Digest::SHA1.digest( nonce + datetime + config.password ) )
+      Rails.logger.debug "digest #{digest}"
 
       headers = {
         'Content-Type' => 'application/json',
         'X-WSSE' => "UsernameToken Username=\"#{config.username}\", PasswordDigest=\"#{digest}\", Nonce=\"#{nonce64}\", Created=\"#{datetime}\"" 
       }
 
-      res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+      Rails.logger.debug "headers: #{headers}"
+      res = Net::HTTP.start(uri.host, uri.port) do |http|
         req = Net::HTTP::const_get(method.capitalize).new(uri.request_uri, headers)
         req.body = JSON.dump(params)
-        do_request(http, req, uri)
+        http.request(req)
       end
 
       # decode json data
@@ -62,7 +68,6 @@ module Ibanfirst
       data
     end
   end
-
 
   # test
   def self.hi
