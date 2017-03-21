@@ -11,7 +11,7 @@ module Ibanfirst
 
       def build_url(id = nil)
         if self == Base
-          raise NotImplementedError.new('Base is an abstract class. Do not use it directly.')
+          raise RequestError.new('Base is an abstract class. Do not use it directly.')
         end
         if id
           "#{base_url}/-#{CGI.escape(id)}"
@@ -19,7 +19,6 @@ module Ibanfirst
           "#{base_url}/"
         end
       end
-
 
       #def request(method, url, params={}, filters={}, headers_opt = nil)
       def create(params={})
