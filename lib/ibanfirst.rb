@@ -27,6 +27,19 @@ module Ibanfirst
     end
   end
 
+  class ResponseError < StandardError
+    attr_reader :request_url, :code, :type
+
+    def initialize(request_url, code, type='Unknown Type')
+      @request_url, @code, @type = request_url, code, type
+
+      super(type)
+    end
+  end
+
+  class RequestError < StandardError
+  end
+
   class << self
     attr_accessor :config
 
@@ -35,18 +48,18 @@ module Ibanfirst
       yield self.config
     end
 
-    # from mangopay: (method, url, params={}, filters={}, headers_or_idempotency_key = nil, before_request_proc = nil)
     def request(method, url, params={}, filters={}, headers_opt = nil)
       Rails.logger.debug "#{method}  #{config.api_path}/#{url}  -  params: #{params}"
       uri = URI("#{config.api_path}/#{url}")
       uri.query = URI.encode_www_form(filters) unless filters.empty?
 
       nonce = SecureRandom.hex(16)
-      Rails.logger.debug "nonce #{nonce}"
       nonce64 = Base64.strict_encode64(nonce)
-      Rails.logger.debug "nonce64 #{nonce64}"
       datetime = Time.now.utc.iso8601
+      Rails.logger.debug "nonce #{nonce}"
+      Rails.logger.debug "nonce64 #{nonce64}"
       Rails.logger.debug "datetime #{datetime}"
+
       digest = Base64.strict_encode64( Digest::SHA1.digest( nonce + datetime + config.password ) )
       Rails.logger.debug "digest #{digest}"
 
@@ -65,12 +78,10 @@ module Ibanfirst
       # decode json data
       data = res.body.to_s.empty? ? {} : JSON.load(res.body.to_s)
 
+      Rails.logger.debug "response data #{data}" if data['Error']
+      raise ResponseError.new(uri, data['Error']['ErrorCode'], data['Error']['ErrorType']) if data['Error']
+
       data
     end
-  end
-
-  # test
-  def self.hi
-    puts "Hello world!"
   end
 end
