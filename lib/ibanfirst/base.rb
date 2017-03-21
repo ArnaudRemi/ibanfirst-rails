@@ -14,7 +14,7 @@ module Ibanfirst
           raise NotImplementedError.new('Base is an abstract class. Do not use it directly.')
         end
         if id
-          "#{base_url}/-#{CGI.escape(id)}/"
+          "#{base_url}/-#{CGI.escape(id)}"
         else
           "#{base_url}/"
         end
