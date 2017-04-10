@@ -17,17 +17,23 @@ module Ibanfirst
   autoload :Trade,                'ibanfirst/trade'
   autoload :Wallet,               'ibanfirst/wallet'
 
+  # Config class
   class Configuration
-    attr_accessor :api_path, :password, :username, :email_contact
+    attr_accessor :api_path, :password, :username, :email_contact, :debug
 
     def initialize
       # TODO add all key value from ENV
       # or put it throught initialiazer
       @email_contact = 'contact@example.com'
+      debug = false
     end
   end
 
-  class ResponseError < StandardError
+  # Errors
+  class Error < StandardError
+  end
+
+  class ResponseError < Error
     attr_reader :request_url, :code, :type
 
     def initialize(request_url, code, type='Unknown Type')
@@ -37,9 +43,10 @@ module Ibanfirst
     end
   end
 
-  class RequestError < StandardError
+  class RequestError < Error
   end
 
+  # Class method
   class << self
     attr_accessor :config
 
@@ -49,7 +56,9 @@ module Ibanfirst
     end
 
     def request(method, url, params={}, filters={}, headers_opt = nil)
-      Rails.logger.debug "#{method}  #{config.api_path}/#{url}  -  params: #{params}"
+      Rails.logger.debug "#{method}  #{config.api_path}/#{url}"
+      Rails.logger.debug "params: #{params}"
+      Rails.logger.debug "filters: #{filters}"
       uri = URI("#{config.api_path}/#{url}")
       uri.query = URI.encode_www_form(filters) unless filters.empty?
 
@@ -78,7 +87,7 @@ module Ibanfirst
       # decode json data
       data = res.body.to_s.empty? ? {} : JSON.load(res.body.to_s)
 
-      Rails.logger.debug "response data #{data}" if data['Error']
+      Rails.logger.debug "response data #{data}" if data['Error'] || config.debug
       raise ResponseError.new(uri, data['Error']['ErrorCode'], data['Error']['ErrorType']) if data['Error']
 
       data
