@@ -6,6 +6,11 @@ Gem for the Ibanfirst API [WIP]
 
 Before everthing else, create an ibanfirst account.
 
+Add the Gem to your Gemfile
+```
+gem "ibanfirst-rails", :git => 'git@github.com:ArnaudRemi/ibanfirst-rails.git'
+```
+
 Create an initializer for ibanfirst. You should put it into `config/initializers/ibanfirst.rb'.
 ```
 require 'ibanfirst'
