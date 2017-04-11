@@ -35,12 +35,54 @@ Then you will be able to use the differents ibanfirst resources:
 
 on each one you can use the CRUD funtions: create, list, update, retreive and delete
 ```
-Resource.create(params)
-Resource.list(filters) # filters can be nil
-Resouce.update(id, params)
-Resouce.retreive(id)
-Resouce.delete(id)
+Ibanfirst::Resource.create(params)
+Ibanfirst::Resource.list(filters)
+Ibanfirst::Resource.update(id, params)
+Ibanfirst::Resource.retreive(id)
+Ibanfirst::Resource.delete(id)
 ```
+
+(For the moment) The result is the Hash or Array stored into the response.
+(In a near futur, we will use resource instance with proper functions, ect)
+
+By exemple:
+```
+Ibanfirst::Wallet.list
+=> [
+			{"id"=>"XXXXXXX", "tag"=>"E-compte EUR", "currency"=>"EUR", "bookingAmount"=>{"value"=>"4037.64", "currency"=>"EUR"}, "valueAmount"=>{"value"=>"4037.64", "currency"=>"EUR"}, "dateLastFinancialMovement"=>"2017-02-03 15:15:14"}, 
+			{"id"=>"XXXXXXY", "tag"=>"E-compte USD", "currency"=>"USD", "bookingAmount"=>{"value"=>"2606.29", "currency"=>"USD"}, "valueAmount"=>{"value"=>"2606.29", "currency"=>"USD"}, "dateLastFinancialMovement"=>"2017-02-03 15:23:30"}, 
+			{"id"=>"XXXXXXZ", "tag"=>"E-compte HKD", "currency"=>"HKD", "bookingAmount"=>{"value"=>"0.00", "currency"=>"HKD"}, "valueAmount"=>{"value"=>"0.00", "currency"=>"HKD"}, "dateLastFinancialMovement"=>nil}
+	]
+```
+
+Some resources have specific functions.
+Let list them.
+
+```
+# Wallet
+Ibanfirst::Wallet.balance(id, date)     								# [TODO]
+Ibanfirst::Wallet.generateIBAN(branch, accountNumber)   # [TODO]
+
+
+# Payment
+Ibanfirst::Payment.confirm(id)
+Ibanfirst::Payment.list()																# status specified into filters: {status: 'finalized'}
+
+
+# Trades
+Ibanfirst::Trades.rates(['EUR', 'USD']) 								# [TODO]
+Ibanfirst::Trades.quotes(params)												# [TODO]
+Ibanfirst::Trades.list()																# [TODO] status specified into filters: {status: 'finalized'}
+
+# Document
+Ibanfirst::Document.retreiveRIB(rib)										# [TODO]
+
+# Auth
+Ibanfirst::Auth.withtoken(token)												# [TODO]
+Ibanfirst::Auth.invalidate(token)												# [TODO]
+```
+
+
 
 Every feedback is welcome.
 
