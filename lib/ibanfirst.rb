@@ -87,8 +87,9 @@ module Ibanfirst
       # decode json data
       data = res.body.to_s.empty? ? {} : JSON.load(res.body.to_s)
 
-      Rails.logger.debug "response data #{data}" if data['Error'] || config.debug
+      Rails.logger.debug "response data #{data}" if data['Error'] || data['errorCode'] || config.debug
       raise ResponseError.new(uri, data['Error']['ErrorCode'], data['Error']['ErrorType']) if data['Error']
+      raise ResponseError.new(uri, data['ErrorCode'], data['ErrorType']) if data['errorCode']
 
       data
     end
