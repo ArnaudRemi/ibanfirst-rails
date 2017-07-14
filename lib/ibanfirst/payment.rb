@@ -15,6 +15,14 @@ module Ibanfirst
 	  		url = "#{build_url}_#{status}/"
 	  		Ibanfirst.request('GET', url, nil, filters)[base_name.pluralize.to_s]
 	  	end
+
+	  	def proof_of_transaction(id, proof)
+	  		# proof is the JSON hash with the base64 file into file key 
+	  		raise .new('The id is mandatory for this use') unless id
+	  		raise .new('The proof is mandatory for this use') unless proof
+	  		url = build_url(id.to_s) + '/proofOfTransaction'
+	      Ibanfirst.request('PUT', url, proof)[base_name.to_s]
+	  	end
 	  end
   end
 end
