@@ -60,26 +60,26 @@ Let list them.
 
 ```
 # Wallet
-Ibanfirst::Wallet.balance(id, date)                     # [TODO]
-Ibanfirst::Wallet.generateIBAN(branch, accountNumber)   # [TODO]
+Ibanfirst::Wallet.balance(id, date)                     
+Ibanfirst::Wallet.generateIBAN(branch, accountNumber)   
 
 
 # Payment
 Ibanfirst::Payment.confirm(id)
-Ibanfirst::Payment.list()                               # status specified into filters: {status: 'finalized'}
+Ibanfirst::Payment.list()                               # status specified into filters: {status: 'all'}
 
 
 # Trades
-Ibanfirst::Trades.rates(['EUR', 'USD'])                 # [TODO]
-Ibanfirst::Trades.quotes(params)                        # [TODO]
-Ibanfirst::Trades.list()                                # [TODO] status specified into filters: {status: 'finalized'}
+Ibanfirst::Trades.rates(['EUR', 'USD'])
+Ibanfirst::Trades.quotes(params)
+Ibanfirst::Trades.list()                                # status specified into filters: {status: 'all'}
 
 # Document
-Ibanfirst::Document.retreiveRIB(rib)                    # [TODO]
+Ibanfirst::Document.retreiveRIB(rib)
 
 # Auth
-Ibanfirst::Auth.withtoken(token)                        # [TODO]
-Ibanfirst::Auth.invalidate(token)                       # [TODO]
+Ibanfirst::Auth.withtoken(token)
+Ibanfirst::Auth.invalidate(token)
 ```
 
 
