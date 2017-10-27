@@ -14,6 +14,7 @@ module Ibanfirst
 	  		raise RequestError.new('The branch is mandatory for this use') unless branch
 	  		raise RequestError.new('The account_number is mandatory for this use') unless account_number
 	  		Ibanfirst.request('GET', "#{base_url}/generateIBAN/#{branch}/#{account_number}")[base_name.to_s]
+	  	end
 	  end
   end
 end
