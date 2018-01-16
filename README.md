@@ -1,6 +1,6 @@
 # ibanfirst-rails
 
-Gem for the Ibanfirst API [WIP]
+Gem for the Ibanfirst API
 
 # Usage
 
